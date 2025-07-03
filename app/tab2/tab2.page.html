@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Tab 2
+      StormCards
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,9 +9,52 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
+      <ion-title size="large">StormCards: Create Brainstorm Projects</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <!--Infinite scrolling area-->
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>StormCards Project Space</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!--Button to add 3 more cards each time it is clicked-->
+<ion-content>
+  <ion-label>Download free images for cards from Pixabay!</ion-label>
+  <ion-button expand="block" (click)="openPixabay()">Go to Pixabay</ion-button>
+  <ion-button expand="full" (click) = "addCards()">Add More Cards
+  </ion-button>
 </ion-content>
+
+<!--Populates array of ion cards: StormCards-->
+<ion-list>
+  <ion-card *ngFor="let card of cards; let i = index">
+    <ion-card-header>
+      <ion-card-title>{{card.title}}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <!--show an image if added to card-->
+      <img *ngIf="card.image" [src]="card.image" class="card.image"/>
+      <!--show some text if input onto card-->
+      <p *ngIf="card.text">{{ card.text }}</p>
+      <!--Edit card content-->
+      <ion-item lines="none">
+        <ion-label position="stacked">Add Text</ion-label>
+        <ion-textarea [(ngModel)]="cards[i].text" placeholder="Add Text Here..."></ion-textarea>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label position="stacked">Add Image URL</ion-label>
+        <ion-textarea [(ngModel)]="cards[i].image" placeholder="https://..."></ion-textarea>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>  
+</ion-list>
+
+<ion-infinite-scroll threshold="100px" (ioninfinite)="loadMore($event)">
+  <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more cards...">
+  </ion-infinite-scroll-content>
+</ion-infinite-scroll>
+  

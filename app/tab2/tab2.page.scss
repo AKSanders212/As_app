@@ -1,0 +1,11 @@
+ion-content {
+  --background: url('/assets/stormcards.png') no-repeat center center / cover;
+}
+
+.card-image {
+    width: 100%;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}

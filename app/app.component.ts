@@ -7,5 +7,18 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class AppComponent {
-  constructor() {}
+  // src/app/app.component.ts
+  constructor() {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    this.toggleDarkTheme(prefersDark.matches);
+
+    // Listen for changes
+    prefersDark.addEventListener('change', (e) => {
+      this.toggleDarkTheme(e.matches);
+    });
+  }
+
+  toggleDarkTheme(shouldAdd: boolean) {
+    document.body.classList.toggle('dark', shouldAdd);
+  }
 }
