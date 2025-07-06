@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
+// For the routes, loading children here, not components (got some bugs with components)
 const routes: Routes = [
   {
     path: '',

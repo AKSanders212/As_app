@@ -20,6 +20,20 @@
     </ion-toolbar>
   </ion-header>
 
+  <ion-item>
+  <ion-label position="floating">Project Name</ion-label>
+  <ion-input [(ngModel)]="projectName" type="text"></ion-input>
+</ion-item>
+
+<!--Firebase (02) Allows users to save Projects using Firebase-->
+<ion-item>
+  <ion-label position="floating">Project ID</ion-label>
+  <ion-input [(ngModel)]="projectId" type="text"></ion-input>
+</ion-item>
+<ion-button expand="full" (click)="saveProject()">Save Project</ion-button>
+
+<ion-button expand="full" (click)="loadProjects()">Load Project</ion-button>
+
   <!--Button to add 3 more cards each time it is clicked-->
 <ion-content>
   <ion-label>Download free images for cards from Pixabay!</ion-label>
@@ -53,6 +67,7 @@
   </ion-card>  
 </ion-list>
 
+<!--Infinite scrolling area with loading bubble (loading more cards message)-->
 <ion-infinite-scroll threshold="100px" (ioninfinite)="loadMore($event)">
   <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more cards...">
   </ion-infinite-scroll-content>

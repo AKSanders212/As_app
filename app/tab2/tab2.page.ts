@@ -1,5 +1,19 @@
 import { Component } from '@angular/core';
+// Cordova plugin import (with /ngx)
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
+
+// Handles if the user is logged in,
+//  preventing them from accessing other tabbed pages if not
+import { AlertController } from '@ionic/angular';
+
+// Firebase imports for db handling and credentials
+import { auth, db } from '../firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import { collection, getDocs } from 'firebase/firestore';
+
+// Handle redirects to home tab 1 page
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tab2',
@@ -8,11 +22,68 @@ import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
   standalone: false,
 })
 export class Tab2Page {
+
+  // Saves projects using Firebase
+  projectName: string = '';
+  projectId: string = '';
+  userId: string = '';
+
   cards: {title: string; text?: string; image?: string}[] = [];
   cardCount = 0;
-  constructor(private iab: InAppBrowser) {
+
+  constructor(private iab: InAppBrowser, private alertController: AlertController,       
+    private router: Router) {
+
     this.loadInitialCards();
   }
+  
+  ionViewWillEnter() {
+
+      onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.userId = user.uid;
+        // If the user is authenticated, then we load in their projects
+        this.loadProjects();
+      }
+      else {
+          this.showLoginAlert();
+      }
+    });
+  }
+
+  private async showLoginAlert() {
+  const alert = await this.alertController.create({
+    header: 'Not Logged In',
+    message: 'User not logged in, please register or login on Tab 1 page.',
+    buttons: [{
+      text: 'Go to Login',
+      handler: () => {
+        this.router.navigateByUrl('/tabs/tab1');
+      }
+    }]
+  });
+  await alert.present();
+}
+
+  async saveProject() {
+    if (!this.userId || !this.projectId) return;
+
+    await setDoc(doc(db, 'users', this.userId, 'projects', this.projectId), {
+      name: this.projectName,
+      id: this.projectId,
+      createdAt: new Date(),
+    });
+
+    console.log('Project saved');
+  }
+
+  async loadProjects() {
+  const projectCollection = collection(db, 'users', this.userId, 'projects');
+  const snapshot = await getDocs(projectCollection);
+  snapshot.forEach(doc => {
+    console.log(doc.id, '=>', doc.data());
+  });
+}
 
   //function to load pixabay
   openPixabay() {
@@ -50,6 +121,7 @@ export class Tab2Page {
     }
   }
 
+  // When called generates 3 more StormCards based on cardCount incrementor
   generateCard() {
     this.cardCount++;
     return {
